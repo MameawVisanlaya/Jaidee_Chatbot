@@ -6,6 +6,13 @@ from google.cloud import storage
 from dotenv import load_dotenv
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+import google.auth
+
+# ใช้การรับรองอัตโนมัติจาก GCP (ถ้าใช้ GCP หรือ Google Cloud SDK)
+credentials, project = google.auth.default()
+
+# เชื่อมต่อกับ GCS
+client = storage.Client(credentials=credentials, project=project)
 
 # โหลดค่า Environment Variables จากไฟล์ .env
 load_dotenv()
@@ -13,21 +20,26 @@ load_dotenv()
 # ดึง API Key จากไฟล์ .env
 API_KEY = os.getenv("API_KEY")
 
-# ตั้งค่า Google Cloud Service Account
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/workspaces/Jaidee_Chatbot/sasichatbot59-3461e68bb98f.json"
-
 # Google Cloud Storage Bucket
 BUCKET_NAME = "chat_bot_file"
-FILE_PATH = "Chatbot/Chunks/ocr_results_chunks.jsonl"
 
 # ฟังก์ชันโหลดไฟล์จาก Google Cloud Storage
 def load_chunks_from_gcs(bucket_name, file_path):
     try:
+        # สร้าง client GCS
         storage_client = storage.Client()
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(file_path)
+        
+        # ดาวน์โหลดไฟล์
         content = blob.download_as_text()
-        chunks = [json.loads(line) for line in content.splitlines()]
+
+        # แสดงเนื้อหาของไฟล์ที่โหลดมา
+        print("เนื้อหาของไฟล์:")
+        print(content)
+
+        # ถ้าไฟล์ไม่ใช่ JSON ให้แยกข้อมูลตามบรรทัด
+        chunks = content.splitlines()  # แยกข้อมูลเป็นบรรทัด
         return chunks
     except Exception as e:
         st.error(f"ไม่สามารถโหลดไฟล์จาก Google Cloud Storage ได้: {e}")
@@ -59,7 +71,7 @@ def get_relevant_context(question, chunks):
     context_texts = []
 
     for chunk in chunks:
-        text = chunk.get("text", "")
+        text = chunk  # เพราะ chunks เป็นลิสต์ของบรรทัด ไม่ต้องใช้ .get
         embedding = get_embedding(text)
         if embedding is not None:
             context_embeddings.append(embedding)
@@ -135,6 +147,7 @@ if "chat_history" not in st.session_state:
 
 # โหลดไฟล์ Chunk จาก Google Cloud Storage
 st.write("กำลังโหลดข้อมูลจาก Google Cloud Storage...")
+FILE_PATH = "Chatbot/Chunks/sasichatbot59-3461e68bb98f.json"  # กำหนด path ของไฟล์
 chunks = load_chunks_from_gcs(BUCKET_NAME, FILE_PATH)
 if chunks:
     st.success("โหลดข้อมูลสำเร็จ!")
@@ -179,5 +192,3 @@ if user_input := st.chat_input("พิมพ์คำถามของคุณ
 if st.button("🔄 ล้างประวัติคำถามล่าสุด"):
     if st.session_state["chat_history"]:
         st.session_state["chat_history"].pop()  # ลบคำถาม/คำตอบล่าสุด
-
-
