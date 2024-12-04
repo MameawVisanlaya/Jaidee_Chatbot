@@ -1,1 +1,6 @@
-streamlit 
+streamlit
+google-cloud-storage
+google-cloud
+python-dotenv
+scikit-learn
+numpy
