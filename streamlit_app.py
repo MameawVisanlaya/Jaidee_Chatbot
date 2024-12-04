@@ -9,7 +9,7 @@ import numpy as np
 import google.auth
 header = {
     "authorization": st.secrets["auth_token"],
-    "content-type": "application/jason"
+    "content-type": "application/json"
 }
 
 # ใช้การรับรองอัตโนมัติจาก GCP (ถ้าใช้ GCP หรือ Google Cloud SDK)
