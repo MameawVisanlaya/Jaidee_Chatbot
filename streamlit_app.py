@@ -14,7 +14,7 @@ load_dotenv()
 API_KEY = os.getenv("API_KEY")
 
 # ตั้งค่า Google Cloud Service Account
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/workspaces/Jaidee_Chatbot/service-account-key.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/workspaces/Jaidee_Chatbot/sasichatbot59-3461e68bb98f.json"
 
 # Google Cloud Storage Bucket
 BUCKET_NAME = "chat_bot_file"
@@ -127,7 +127,7 @@ def generate_answer_with_gemini(question, context="", chat_history=[]):
 
 # เริ่มต้น Streamlit UI
 st.title("😊น้องใจดี")
-st.markdown("🩺👩🏻‍⚕️💬 น้องพยาบาลฝึกหัดที่พร้อมรับฟังปัญหาสุขภาพใจ  และให้คำแนะนำด้านโภชนาการ")
+st.markdown("🩺👩🏻⚕️💬 น้องพยาบาลฝึกหัดที่พร้อมรับฟังปัญหาสุขภาพใจ  และให้คำแนะนำด้านโภชนาการ")
 
 # ตรวจสอบและกำหนดค่าเริ่มต้นของ session_state
 if "chat_history" not in st.session_state:
@@ -176,7 +176,8 @@ if user_input := st.chat_input("พิมพ์คำถามของคุณ
 
     st.chat_message("assistant").markdown(bot_response)
 
-
 if st.button("🔄 ล้างประวัติคำถามล่าสุด"):
     if st.session_state["chat_history"]:
         st.session_state["chat_history"].pop()  # ลบคำถาม/คำตอบล่าสุด
+
+
