@@ -7,10 +7,6 @@ from dotenv import load_dotenv
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import google.auth
-header = {
-    "authorization": st.secrets["auth_token"],
-    "content-type": "application/json"
-}
 
 # ใช้การรับรองอัตโนมัติจาก GCP (ถ้าใช้ GCP หรือ Google Cloud SDK)
 credentials, project = google.auth.default()
@@ -18,6 +14,11 @@ credentials, project = google.auth.default()
 # เชื่อมต่อกับ GCS
 client = storage.Client(credentials=credentials, project=project)
 
+# โหลดค่า Environment Variables จากไฟล์ .env
+load_dotenv()
+
+# ดึง API Key จากไฟล์ .env
+API_KEY = os.getenv("API_KEY")
 
 # Google Cloud Storage Bucket
 BUCKET_NAME = "chat_bot_file"
